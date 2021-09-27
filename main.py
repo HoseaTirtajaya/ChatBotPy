@@ -6,65 +6,39 @@ import os
 import telebot
 import yfinance as yf
 from dotenv import load_dotenv
+import urllib3
 load_dotenv()
 
 API_KEY = os.environ.get("API_KEY")
 bot = telebot.TeleBot(API_KEY)
-                
-@bot.message_handler(commands=['help', "Help"])
+
+
+@bot.message_handler(commands=['help', "Help", "start", "Start", "greet"])
 def greet(message):
     bot.reply_to(message, "Here are some useful commands: \n1. /cryptoindex\n2. /cryptonium")
 
 @bot.message_handler(commands=['cryptoindex'])
-def hello(message):
-    bot.send_message(message.chat.id, "Hello!")
+def cryptoindex(message):
+    bot.send_chat_action(message.chat.id, 'upload_photo')
+    img = open('logo.png', 'rb')
+    bot.send_photo(message.chat.id, img, reply_to_message_id=message.message_id)
+    img.close()
+    bot.send_message(message.chat.id, "Cryptoindex is a New Crypto Exchange Platform in the world. You can trade and invest crypto easily, securely, and convenient in this platform. Multiple crypto assets is available in this Exchange. Some of main crypto assets are Bitcoin, Ethereum, Binance Coin, and other crypto assets. Cryptoindex has built a world-class business that focuses on long-term client relationships, exceptional customer service and continuous innovation. For more information, please visit on https://cryptoindex.id/")
 
-@bot.message_handler(commands=['wsb'])
-def get_stocks(message):
-    response = ""
-    stocks = ['gme', 'amc', 'nok']
-    stock_data = []
-    for stock in stocks:
-        data = yf.download(tickers=stock, period='2d', interval='1d')
-        data = data.reset_index()
-        response += f"-----{stock}-----\n"
-        stock_data.append([stock])
-        columns = ['stock']
-        for index, row in data.iterrows():
-            stock_position = len(stock_data) - 1
-            price = round(row['Close'], 2)
-            format_date = row['Date'].strftime('%m/%d')
-            response += f"{format_date}: {price}\n"
-            stock_data[stock_position].append(price)
-            columns.append(format_date)
-            print()
 
-    response = f"{columns[0] : <10}{columns[1] : ^10}{columns[2] : >10}\n"
-    for row in stock_data:
-        response += f"{row[0] : <10}{row[1] : ^10}{row[2] : >10}\n"
-    response += "\nStock Data"
-    print(response)
-    bot.send_message(message.chat.id, response)
+@bot.message_handler(commands=['cryptonium'])
+def cryptoindex(message):
+    bot.send_chat_action(message.chat.id, 'upload_photo')
+    img = open('logo2.png', 'rb')
+    bot.send_photo(message.chat.id, img, reply_to_message_id=message.message_id)
+    img.close()
+    bot.send_message(message.chat.id, "Cryptonium is a gateway and bridge to the investment community and ecosystem of the cryptoindex platform. present as a token that has a value that continues to grow in accordance with the growth and development of the ecosystem. For more information, please visit on https://cryptonium.digital")
 
-def stock_request(message):
-    request = message.text.split()
-    if len(request) < 2 or request[0].lower() not in "price":
-        return False
-    else:
-        return True
-
-@bot.message_handler(func=stock_request)
-def send_price(message):
-    request = message.text.split()[1]
-    data = yf.download(tickers=request, period='5m', interval='1m')
-    if data.size > 0:
-        data = data.reset_index()
-        data["format_date"] = data['Datetime'].dt.strftime('%m/%d %I:%M %p')
-        data.set_index('format_date', inplace=True)
-        print(data.to_string())
-        bot.send_message(message.chat.id, data['Close'].to_string(header=False))
-    else:
-        bot.send_message(message.chat.id, "No data!?")
+@bot.message_handler(func=lambda message: True)
+def handle_all_message(message):
+    if message.chat.type == "group":
+        if('@crypto_index1_bot' in message.text):
+            bot.reply_to(message, "Please use /help to see all the commands")
 
 bot.polling()
 
