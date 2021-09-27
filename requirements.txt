@@ -1,6 +1,8 @@
-requests
-DateTime
+   
+certifi
+chardet
+idna
 pyTelegramBotAPI
-yfinance
-python-dotenv
+requests
+six
 urllib3

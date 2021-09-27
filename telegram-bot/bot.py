@@ -7,15 +7,13 @@ import telebot
 import yfinance as yf
 from dotenv import load_dotenv
 import urllib3
+from flask import Flask, request
 load_dotenv()
 
 API_KEY = os.environ.get("API_KEY")
 PORT = os.environ.get("PORT")
 bot = telebot.TeleBot(API_KEY)
-
-# Enable logging
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-logger = logging.getLogger(__name__)
+server = Flask(__name__)
 
 @bot.message_handler(commands=['help', "Help", "start", "Start", "greet"])
 def greet(message):
@@ -44,5 +42,22 @@ def handle_all_message(message):
         if('@crypto_index1_bot' in message.text):
             bot.reply_to(message, "Please use /help to see all the commands")
 
-bot.polling()
+# while True: 
+#     try:
+#         bot.polling(none_stop=True)
+#     except Exception:
+#         time.sleep(15)
 
+@server.route('/' + API_KEY, methods=['POST'])
+def getMessage():
+    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
+    return "!", 200
+
+@server.route("/")
+def webhook(): 
+    bot.remove_webhook()
+    bot.set_webhook(url='https://cryptoindex-telebot.herokuapp.com/' + API_KEY)
+    return "!", 200
+
+if __name__ == "__main__":
+    server.run(host="0.0.0.0", port=int(PORT))
