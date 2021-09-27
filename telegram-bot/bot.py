@@ -56,7 +56,8 @@ def getMessage():
 @server.route("/")
 def webhook(): 
     bot.remove_webhook()
-    bot.set_webhook(url='https://cryptoindex-telebot.herokuapp.com/' + API_KEY)
+    bot.set_webhook(
+        url='https://murmuring-tundra-89245.herokuapp.com/' + API_KEY)
     return "!", 200
 
 if __name__ == "__main__":
