@@ -10,8 +10,12 @@ import urllib3
 load_dotenv()
 
 API_KEY = os.environ.get("API_KEY")
+PORT = os.environ.get("PORT")
 bot = telebot.TeleBot(API_KEY)
 
+# Enable logging
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 @bot.message_handler(commands=['help', "Help", "start", "Start", "greet"])
 def greet(message):

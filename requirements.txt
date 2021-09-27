@@ -1,0 +1,6 @@
+requests
+DateTime
+pyTelegramBotAPI
+yfinance
+python-dotenv
+urllib3
